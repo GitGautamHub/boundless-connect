@@ -1,7 +1,7 @@
 # **Boundless Connect: Simplifying Global SMB Exports (Prototype)**
 
 ### **Overview**
-Boundless Connect is a platform designed to simplify global trade for Indian SMBs. It integrates real-time communication, seamless document sharing, carrier selection, shipment tracking, and query resolution. This project is built as a prototype solution for SMBs like **FreshFruits Ltd.**.
+Boundless Connect is a prototype platform designed to simplify global trade for Indian SMBs. It integrates real-time communication, seamless document sharing, carrier selection, shipment tracking, and query resolution. This project is built as a prototype solution for SMBs like **FreshFruits Ltd.**.
 
 ---
 
@@ -58,6 +58,13 @@ Since this is a prototype, only a single seller account is available for demonst
 - **Flask**: For chatbot integration.
 - **MongoDB**: For mock data storage.
 
+#### **Chatbot**
+- **Flask**: Python-based microframework used to build the chatbot backend.
+- **TensorFlow**: For training and running the chatbot's intent classification model.
+- **Natural Language Toolkit (NLTK)**: For text preprocessing, including tokenization and lemmatization.
+- **Keras**: For building and training the neural network model.
+- **Pickle**: For serializing and loading the chatbot model's data such as classes and words.
+
 ---
 
 ### **Installation**
@@ -65,7 +72,6 @@ Since this is a prototype, only a single seller account is available for demonst
 #### **Prerequisites**
 1. **Node.js**: Ensure you have Node.js installed (v16+).
 2. **Python**: Python 3.8+ is required for the Flask chatbot.
-3. **MongoDB**: A running MongoDB instance (local or cloud-based).
 
 ---
 
@@ -89,11 +95,6 @@ Since this is a prototype, only a single seller account is available for demonst
    For Node.js:
    ```bash
    npm install
-   ```
-
-   Configure `.env` file: Create a `.env` file in the backend directory with the following:
-   ```plaintext
-   MONGO_URI=<your-mongodb-uri>
    ```
 
 3. **Start the backend servers**:
@@ -199,6 +200,6 @@ Since this is a prototype, only a single seller account is available for demonst
 ---
 
 ### **Contributors**
+- **Divyansh Sethi**: Frontend Development
 - **Gautam**: Backend Development & Machine Learning
 - **Manya Sehgal**: Machine Learning
-- **Divyansh Sethi**: Frontend Development
