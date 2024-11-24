@@ -9,7 +9,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "proxy": "http://localhost:4000"
+    "proxy": "http://localhost:4000",
+    "deploy": "gp-pages -d build"
   },
   "dependencies": {
     "aws-sdk": "^2.1692.0",
