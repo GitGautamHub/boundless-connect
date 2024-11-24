@@ -7,6 +7,14 @@ app = Flask(__name__)
 # Enable CORS for the app
 CORS(app)
 
+@app.route('/', methods=['GET'])
+def health_check():
+    """
+    Root route to check if the server is running.
+    This route is primarily used for health checks.
+    """
+    return jsonify({"message": "Boundless Connect Chatbot Backend is running!"}), 200
+
 @app.route('/chat', methods=['POST'])
 def chatbot_response():
     try:
@@ -31,7 +39,12 @@ def chatbot_response():
 
         # Predict intent and get response
         intents_list = predict_class(message, language_code)
+        if not intents_list:
+            return jsonify({"error": "Unable to predict the intent of the message. Please try again with a different input."}), 500
+
         response = get_response(intents_list, language_code)
+        if not response:
+            return jsonify({"error": "Unable to generate a response. Please try again later."}), 500
 
         # Return bot response
         return jsonify({"response": response}), 200
