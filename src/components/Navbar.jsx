@@ -1,59 +1,85 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FiMenu, FiX, FiGlobe } from 'react-icons/fi';
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { FiMenu, FiX, FiUser, FiLogOut, FiGlobe } from "react-icons/fi";
 
-function Navbar() {
+function Navbar({ isAuthenticated, user, setAuth }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Carrier Selection', path: '/carrier-selection' },
-    { name: 'Shipment Tracking', path: '/shipment-tracking' },
-    { name: 'Documents', path: '/documents' },
+    { name: "Home", path: "/" },
+    { name: "Dashboard", path: "/dashboard" },
+    { name: "Carrier Selection", path: "/carrier-selection" },
+    { name: "Shipment Tracking", path: "/shipment-tracking" },
+    { name: "Documents", path: "/documents" },
   ];
 
   const isActive = (path) => location.pathname === path;
 
+  const handleLogout = () => {
+    setAuth(false);
+    localStorage.removeItem("user"); // Clear user data from local storage
+    window.location.href = "/auth"; // Redirect to Sign In page
+  };
+
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-gradient-to-r from-blue-700 via-blue-800 to-blue-900 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-primary-600">Boundless Connect</span>
-            </Link>
-          </div>
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="text-2xl font-bold text-white">
+            Boundless Connect
+          </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
+          <div className="hidden md:flex items-center space-x-6">
+            {navLinks
+              .filter((link) => isAuthenticated || link.name === "Home") // Show Home for non-authenticated users
+              .map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`${
+                    isActive(link.path)
+                      ? "text-blue-300 border-b-2 border-blue-300"
+                      : "hover:text-blue-300"
+                  } px-3 py-2 text-sm font-medium transition-colors duration-200`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            {!isAuthenticated ? (
               <Link
-                key={link.path}
-                to={link.path}
-                className={`${
-                  isActive(link.path)
-                    ? 'text-primary-600 border-b-2 border-primary-600'
-                    : 'text-gray-600 hover:text-primary-600'
-                } px-3 py-2 text-sm font-medium transition-colors duration-200`}
+                to="/auth"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
               >
-                {link.name}
+                Sign In
               </Link>
-            ))}
-            <button className="flex items-center text-gray-600 hover:text-primary-600">
-              <FiGlobe className="h-5 w-5" />
-            </button>
-            <Link to="/auth" className="btn-primary">
-              Sign In
-            </Link>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <span className="flex items-center text-sm font-medium">
+                  <FiUser className="mr-1 text-blue-300" />
+                  {user?.name.split(" ")[0]}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center text-sm font-medium hover:text-blue-300"
+                >
+                  <FiLogOut className="mr-1" />
+                  Logout
+                </button>
+                <button className="flex items-center hover:text-blue-300">
+                  <FiGlobe className="h-5 w-5" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-600 hover:text-primary-600 focus:outline-none"
+              className="text-white hover:text-blue-300 focus:outline-none"
             >
               {isOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
             </button>
@@ -63,29 +89,40 @@ function Navbar() {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            {navLinks.map((link) => (
+        <div className="md:hidden bg-gradient-to-b from-blue-800 via-blue-900 to-blue-950">
+          <div className="px-4 py-3 space-y-2">
+            {navLinks
+              .filter((link) => isAuthenticated || link.name === "Home") // Show Home for non-authenticated users
+              .map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`block px-4 py-2 rounded-md text-sm font-medium ${
+                    isActive(link.path)
+                      ? "bg-blue-600 text-white"
+                      : "hover:bg-blue-600 hover:text-white"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            {!isAuthenticated ? (
               <Link
-                key={link.path}
-                to={link.path}
-                className={`${
-                  isActive(link.path)
-                    ? 'bg-primary-50 text-primary-600'
-                    : 'text-gray-600 hover:bg-primary-50 hover:text-primary-600'
-                } block px-3 py-2 rounded-md text-base font-medium`}
+                to="/auth"
+                className="block px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white hover:bg-blue-700"
                 onClick={() => setIsOpen(false)}
               >
-                {link.name}
+                Sign In
               </Link>
-            ))}
-            <Link
-              to="/auth"
-              className="block px-3 py-2 rounded-md text-base font-medium text-white bg-primary-600 hover:bg-primary-700"
-              onClick={() => setIsOpen(false)}
-            >
-              Sign In
-            </Link>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="block px-4 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-600"
+              >
+                Logout
+              </button>
+            )}
           </div>
         </div>
       )}

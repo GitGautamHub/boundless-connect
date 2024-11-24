@@ -1,0 +1,96 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hi", "Hello", "Hey", "Good morning", "Good evening"],
+      "responses": ["Hello! How can I assist you with your logistics today?", "Hi there! What can I do for you?"]
+    },
+    {
+      "tag": "shipment_tracking",
+      "patterns": ["Track my shipment", "Where is my order?", "Shipment status"],
+      "responses": [
+        "Please go to the 'Shipment Tracking' tab and enter your shipment number to track your order.",
+        "You can track your shipment by visiting the Shipment Tracking page and entering your shipment ID."
+      ]
+    },
+    {
+      "tag": "carrier_selection",
+      "patterns": ["Suggest carriers", "Which carrier is best?", "Help me choose a carrier"],
+      "responses": ["Based on your needs, I recommend Express Global Logistics. Would you like details?"]
+    },
+    {
+      "tag": "compliance",
+      "patterns": ["Compliance check", "Do I need documents?", "What documents are required?"],
+      "responses": [
+        "For cross-border shipments, you'll need invoices, packing lists, and certificates. You can upload these in the 'Documents' tab.",
+        "Ensure you have invoices, packing lists, and certifications uploaded in the 'Documents' section for compliance."
+      ]
+    },
+    {
+      "tag": "dashboard_help",
+      "patterns": ["How to use the dashboard?", "Help with the dashboard", "What is the dashboard for?"],
+      "responses": [
+        "The dashboard provides an overview of your shipments, pending tasks, and alerts. Navigate through the tabs for specific features like shipment tracking, carrier selection, or document uploads."
+      ]
+    },
+    {
+      "tag": "document_upload",
+      "patterns": ["Upload documents", "Where to upload documents?", "How to upload compliance documents?"],
+      "responses": [
+        "You can upload your required documents in the 'Documents' tab on the portal. Let me know if you need more guidance."
+      ]
+    },
+    {
+      "tag": "new_shipment",
+      "patterns": ["Create new shipment", "How to book a shipment?", "Start a new shipment"],
+      "responses": [
+        "To create a new shipment, go to the Dashboard and click on 'Create New Shipment'. Follow the form to complete the details."
+      ]
+    },
+    {
+      "tag": "payment_support",
+      "patterns": ["Payment issue", "Payment failed", "Help with payment"],
+      "responses": [
+        "If you're facing payment issues, please check your payment method or try again. If the issue persists, contact support."
+      ]
+    },
+    {
+      "tag": "technical_issue",
+      "patterns": ["Facing an issue", "Something is not working", "Portal not responding"],
+      "responses": [
+        "We apologize for the inconvenience. Please try refreshing the page. If the issue continues, contact our support team."
+      ]
+    },
+    {
+      "tag": "contact_support",
+      "patterns": ["Contact support", "How to reach support?", "Support contact details"],
+      "responses": [
+        "You can reach our support team via email at support@boundlessconnect.com or call us at +1 800 555 1234."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["Thanks", "Thank you", "That's helpful"],
+      "responses": ["You're welcome! Let me know if there's anything else."]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "Goodbye", "See you later"],
+      "responses": ["Goodbye! Have a great day!"]
+    },
+    {
+      "tag": "about_boundless_connect",
+      "patterns": ["What is Boundless Connect?", "Tell me about this portal", "What does this platform do?"],
+      "responses": [
+        "Boundless Connect is a logistics management platform designed to simplify your shipment processes, track orders, and manage compliance efficiently. Let me know how I can help you!"
+      ]
+    },
+    {
+      "tag": "reset_password",
+      "patterns": ["Reset my password", "Forgot password", "How to recover my account?"],
+      "responses": [
+        "To reset your password, click on 'Forgot Password' on the login page and follow the instructions to recover your account."
+      ]
+    }
+  ]
+}

@@ -40,3 +40,39 @@
 .read-the-docs {
   color: #888;
 }
+.document-management {
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+}
+
+.document-management h2 {
+  color: #333;
+}
+
+.upload-section input[type="file"] {
+  display: block;
+  margin-top: 10px;
+}
+
+.document-list table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.document-list th,
+.document-list td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+button {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #ff7f50;
+}
