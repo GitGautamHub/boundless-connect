@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function Auth({ setAuth, setUser }) {
@@ -8,21 +7,23 @@ function Auth({ setAuth, setUser }) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
-    try {
-      const res = await axios.post('http://localhost:5000/api/login', { email, password });
-      console.log('Login Response:', res.data);
-      setAuth(true);
-      setUser(res.data.user); // Store user details
-      navigate('/'); // Navigate to Home
-    } catch (err) {
-      console.error('Login error:', err.response || err.message);
-      alert(err.response?.data?.message || 'Login failed. Check your credentials.');
-    } finally {
+
+    // Mock authentication
+    setTimeout(() => {
+      if (email === 'gautam@example.com' && password === 'password123') {
+        console.log('Login Successful');
+        setAuth(true);
+        setUser({ email: 'gautam@example.com', name: 'Gautam Kumar' }); // Mock user details
+        navigate('/'); // Navigate to Home
+      } else {
+        console.error('Invalid credentials');
+        alert('Invalid credentials. Please try again.');
+      }
       setIsLoading(false);
-    }
+    }, 1000); // Simulate network delay
   };
 
   return (

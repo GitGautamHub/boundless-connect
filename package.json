@@ -1,7 +1,7 @@
 {
   "name": "boundless-connect",
   "private": true,
-  "homepage": "https://gitgautamhub.github.io/boundless-connect", 
+  "homepage": "https://gitgautamhub.github.io/boundless-connect",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

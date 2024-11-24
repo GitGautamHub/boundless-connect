@@ -19,7 +19,7 @@ function Chatbot() {
     setLoading(true); // Show loading indicator
 
     try {
-      const res = await axios.post("http://localhost:5001/chat", {
+      const res = await axios.post("https://boundless-connect-chatbot-backend.onrender.com/chat", {
         message: input,
         language_code: language, // Send the selected language
       });
