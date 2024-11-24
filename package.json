@@ -1,11 +1,7 @@
 {
   "name": "boundless-connect",
   "private": true,
-<<<<<<< HEAD
-  "homepage": "https://gitgautamhub.github.io/boundless-connect",
-=======
   "homepage": "https://gitgautamhub.github.io/boundless-connect", 
->>>>>>> 0d8acd71d157f924aaff82146f7f22ca3c8a8979
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -13,10 +9,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-<<<<<<< HEAD
-=======
     "proxy": "http://localhost:4000",
->>>>>>> 0d8acd71d157f924aaff82146f7f22ca3c8a8979
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
