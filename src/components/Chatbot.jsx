@@ -22,7 +22,7 @@ function Chatbot() {
     try {
       console.log(`[DEBUG] Sending message to bot: ${input} in language: ${language}`);   
       const res = await axios.post(
-        "https://boundless-connect-chatbot-backend.onrender/chat",
+        "https://boundless-connect-chatbot.onrender.com",
         {
           message: input,
           language_code: language, // Send the selected language
