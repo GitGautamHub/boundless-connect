@@ -54,6 +54,6 @@ def chatbot_response():
         print(f"[ERROR] {str(e)}")
         return jsonify({"error": "An error occurred while processing your request. Please try again later."}), 500
 
-
+# Running the application
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)

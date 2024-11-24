@@ -28,7 +28,7 @@ function Chatbot() {
           language_code: language, // Send the selected language
         }
       );
-
+      
       // Append bot response to the chat
       console.log(`[DEBUG] Bot response: `, res.data.response);
 
