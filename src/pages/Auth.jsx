@@ -69,6 +69,18 @@ function Auth({ setAuth, setUser }) {
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+        <div className="mt-6 text-sm text-gray-600">
+          <p>
+            <strong>Note:</strong> Use the following credentials for a demo seller account:
+          </p>
+          <ul className="list-disc list-inside mt-2">
+            <li>Email: <strong>gautam@example.com</strong></li>
+            <li>Password: <strong>password123</strong></li>
+          </ul>
+          <p className="mt-4">
+            Gautam Kumar is an SMB business owner dealing in electronics. He has been using Boundless Connect for the last six months to manage his global shipments seamlessly.
+          </p>
+        </div>
       </div>
     </div>
   );

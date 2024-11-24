@@ -19,19 +19,36 @@ function Chatbot() {
     setLoading(true); // Show loading indicator
 
     try {
-      const res = await axios.post("https://boundless-connect-chatbot-backend.onrender.com/chat", {
-        message: input,
-        language_code: language, // Send the selected language
-      });
+      console.log(`[DEBUG] Sending message to bot: ${input} in language: ${language}`);
+      
+      const res = await axios.post(
+        "https://boundless-connect-chatbot-backend.onrender.com/chat",
+        {
+          message: input,
+          language_code: language, // Send the selected language
+        }
+      );
+
       // Append bot response to the chat
+      console.log(`[DEBUG] Bot response: `, res.data.response);
+
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: res.data.response || "No response from the bot." },
       ]);
     } catch (error) {
+      console.error(`[ERROR] Failed to send message:`, error.response || error.message);
+
+      let errorMessage = "Oops! Something went wrong. Please try again later.";
+      if (error.response && error.response.data) {
+        errorMessage =
+          error.response.data.error ||
+          "The server encountered an issue processing your message.";
+      }
+
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "Oops! Something went wrong. Please try again later." },
+        { sender: "bot", text: errorMessage },
       ]);
     } finally {
       setLoading(false); // Remove loading indicator
