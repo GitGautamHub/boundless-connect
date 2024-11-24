@@ -17,9 +17,7 @@ function Navbar({ isAuthenticated, user, setAuth }) {
   const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    setAuth(false);
-    localStorage.removeItem("user"); // Clear user data from local storage
-    window.location.href = "/auth"; // Redirect to Sign In page
+    // Redirect to Sign In page
   };
 
   return (
