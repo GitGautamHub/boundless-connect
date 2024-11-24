@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "proxy": "http://localhost:4000",
-    "deploy": "gp-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "aws-sdk": "^2.1692.0",
