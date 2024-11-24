@@ -17,10 +17,8 @@ function Chatbot() {
     setMessages((prev) => [...prev, { sender: "user", text: input }]);
     setInput(""); // Clear input field
     setLoading(true); // Show loading indicator
-
     try {
-      console.log(`[DEBUG] Sending message to bot: ${input} in language: ${language}`);
-      
+      console.log(`[DEBUG] Sending message to bot: ${input} in language: ${language}`);   
       const res = await axios.post(
         "https://boundless-connect-chatbot-backend.onrender.com/chat",
         {
@@ -28,7 +26,7 @@ function Chatbot() {
           language_code: language, // Send the selected language
         }
       );
-      
+
       // Append bot response to the chat
       console.log(`[DEBUG] Bot response: `, res.data.response);
 

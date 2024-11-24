@@ -5,7 +5,7 @@ from nlp_utils import predict_class, get_response
 app = Flask(__name__)
 
 # Enable CORS for the app with specific origins
-CORS(app, resources={r"/*": {"origins": "https://boundless-connect-frontend.onrender.com"}})
+CORS(app, resources={r"/*": {"origins": "https://boundless-connect-chatbot-backend.onrender.com"}})
 
 @app.route('/', methods=['GET'])
 def health_check():
