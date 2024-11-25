@@ -77,6 +77,7 @@ function CarrierSelection() {
     doc.setFillColor(240, 240, 240);
     doc.rect(0, 0, 210, 297, 'F');
 
+    // Header
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(28);
     doc.setTextColor(40, 70, 120);
@@ -85,6 +86,7 @@ function CarrierSelection() {
     doc.setDrawColor(40, 70, 120);
     doc.line(20, 30, 190, 30);
 
+    // Shipment Details
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
@@ -98,6 +100,7 @@ function CarrierSelection() {
     doc.text(`Delivery Date: ${formData.deliveryDate}`, 20, 90);
     doc.text(`Packaging: ${formData.packaging}`, 20, 100);
 
+    // Carrier Details
     if (selectedCarrier) {
       doc.setFont('Helvetica', 'bold');
       doc.setTextColor(0, 0, 0);
@@ -109,6 +112,18 @@ function CarrierSelection() {
       doc.text(`Delivery Time: ${selectedCarrier.deliveryTime}`, 20, 145);
       doc.text(`Rating: ${selectedCarrier.rating} stars`, 20, 155);
     }
+
+    // Generate Barcode
+    const canvas = document.createElement('canvas');
+    JsBarcode(canvas, 'SHIP123456789', { format: 'CODE128' });
+    const barcodeImage = canvas.toDataURL('image/png');
+    doc.addImage(barcodeImage, 'PNG', 20, 170, 100, 30);
+
+    // Footer
+    doc.setFont('Helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text('Thank you for choosing our service!', 105, 270, { align: 'center' });
 
     doc.save('shipment_invoice.pdf');
   };
