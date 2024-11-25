@@ -10,28 +10,29 @@ function Chatbot() {
   const [loading, setLoading] = useState(false); // Loading state
   const [language, setLanguage] = useState("english"); // Default language
 
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || "https://boundless-connect-chatbot.onrender.com/chat";
+
   const handleSendMessage = async () => {
-    if (!input.trim()) return; // Prevent empty messages
+    const trimmedInput = input.trim();
+    if (!trimmedInput) return; // Prevent empty messages
 
     // Append user message to the chat
-    setMessages((prev) => [...prev, { sender: "user", text: input }]);
+    setMessages((prev) => [...prev, { sender: "user", text: trimmedInput }]);
     setInput(""); // Clear input field
     setLoading(true); // Show loading indicator
 
-    
     try {
-      console.log(`[DEBUG] Sending message to bot: ${input} in language: ${language}`);   
+      console.log(`[DEBUG] Sending message to bot: ${trimmedInput} in language: ${language}`);
       const res = await axios.post(
-        "https://boundless-connect-chatbot.onrender.com",
+        backendUrl,
         {
-          message: input,
+          message: trimmedInput,
           language_code: language, // Send the selected language
         }
       );
 
       // Append bot response to the chat
       console.log(`[DEBUG] Bot response: `, res.data.response);
-
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: res.data.response || "No response from the bot." },
@@ -67,6 +68,7 @@ function Chatbot() {
           value={language}
           onChange={handleLanguageChange}
           className="border rounded px-2 py-1 bg-white text-gray-700 focus:outline-none"
+          aria-label="Select Language"
         >
           <option value="english">English</option>
           <option value="hindi">Hindi</option>
@@ -137,6 +139,7 @@ function Chatbot() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                   className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  aria-label="Chat message input"
                 />
                 <button
                   onClick={handleSendMessage}

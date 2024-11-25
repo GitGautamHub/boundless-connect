@@ -1,3 +1,4 @@
+import os
 import nltk
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -7,13 +8,22 @@ import pickle
 
 lemmatizer = WordNetLemmatizer()
 
+# Define the base path for models and data
+base_path = os.path.dirname(os.path.abspath(__file__))
+print(f"Base path: {base_path}")
+
 # Load model and data for a specific language
 def load_language_model(language_code):
     try:
-        model = load_model(f'chatbot/models/{language_code}_model.h5')
-        with open(f'chatbot/models/words_{language_code}.pkl', 'rb') as f:
+        model_path = os.path.join(base_path, 'models', f'{language_code}_model.h5')
+        words_path = os.path.join(base_path, 'models', f'words_{language_code}.pkl')
+        print(f"Model path: {model_path}")
+        classes_path = os.path.join(base_path, 'models', f'classes_{language_code}.pkl')
+
+        model = load_model(model_path)
+        with open(words_path, 'rb') as f:
             words = pickle.load(f)
-        with open(f'chatbot/models/classes_{language_code}.pkl', 'rb') as f:
+        with open(classes_path, 'rb') as f:
             classes = pickle.load(f)
         return model, words, classes
     except Exception as e:
@@ -49,8 +59,13 @@ def predict_class(sentence, language_code):
 
 # Get response based on intent
 def get_response(intents_list, language_code):
-    with open(f'chatbot/intents/intents_{language_code}.json', encoding='utf-8') as f:
-        intents = json.load(f)
+    intents_path = os.path.join(base_path, 'intents', f'intents_{language_code}.json')
+    try:
+        with open(intents_path, encoding='utf-8') as f:
+            intents = json.load(f)
+    except FileNotFoundError:
+        print(f"[ERROR] Intents file not found: {intents_path}")
+        return "I'm sorry, I don't understand that."
 
     if intents_list:
         tag = intents_list[0]['intent']

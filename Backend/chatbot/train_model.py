@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 import nltk
 from nltk.stem import WordNetLemmatizer
 import pickle
+import os
 
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -14,6 +15,11 @@ nltk.download('wordnet')
 lemmatizer = WordNetLemmatizer()
 
 def train_model(intents_file, language_code):
+    # Check if the intents file exists
+    if not os.path.exists(intents_file):
+        print(f"[ERROR] Intents file not found: {intents_file}")
+        return
+
     # Load the intents JSON file
     with open(intents_file, encoding='utf-8') as file:
         intents = json.load(file)
@@ -67,19 +73,23 @@ def train_model(intents_file, language_code):
     model.fit(train_x, train_y, epochs=200, batch_size=5, verbose=1)
 
     # Save the trained model and associated data
-    model.save(f'chatbot/models/{language_code}_model.h5')
-    with open(f'chatbot/models/words_{language_code}.pkl', 'wb') as f:
+    model.save(f'models/{language_code}_model.h5')
+    with open(f'models/words_{language_code}.pkl', 'wb') as f:
         pickle.dump(words, f)
-    with open(f'chatbot/models/classes_{language_code}.pkl', 'wb') as f:
+    with open(f'models/classes_{language_code}.pkl', 'wb') as f:
         pickle.dump(classes, f)
 
     print(f"Model for {language_code} trained and saved successfully!")
 
 if __name__ == "__main__":
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    intents_path = os.path.join(base_path, 'intents')
+    print(intents_path)
+
     # Train for all supported languages
-    train_model('chatbot/intents/intents_english.json', 'english')
-    train_model('chatbot/intents/intents_hindi.json', 'hindi')
-    train_model('chatbot/intents/intents_bengali.json', 'bengali')
-    train_model('chatbot/intents/intents_telugu.json', 'telugu')
-    train_model('chatbot/intents/intents_assamese.json', 'assamese')
-    train_model('chatbot/intents/intents_gujarati.json', 'gujarati')
+    train_model(os.path.join(intents_path, 'intents_english.json'), 'english')
+    train_model(os.path.join(intents_path, 'intents_hindi.json'), 'hindi')
+    train_model(os.path.join(intents_path, 'intents_bengali.json'), 'bengali')
+    train_model(os.path.join(intents_path, 'intents_telugu.json'), 'telugu')
+    train_model(os.path.join(intents_path, 'intents_assamese.json'), 'assamese')
+    train_model(os.path.join(intents_path, 'intents_gujarati.json'), 'gujarati')
