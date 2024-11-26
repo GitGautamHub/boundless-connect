@@ -14,11 +14,14 @@ nltk.download('wordnet')
 
 lemmatizer = WordNetLemmatizer()
 
-def train_model(intents_file, language_code):
+def train_model(intents_file, language_code, models_dir):
     # Check if the intents file exists
     if not os.path.exists(intents_file):
         print(f"[ERROR] Intents file not found: {intents_file}")
         return
+
+    # Ensure the models directory exists
+    os.makedirs(models_dir, exist_ok=True)
 
     # Load the intents JSON file
     with open(intents_file, encoding='utf-8') as file:
@@ -72,24 +75,27 @@ def train_model(intents_file, language_code):
     # Train the model
     model.fit(train_x, train_y, epochs=200, batch_size=5, verbose=1)
 
-    # Save the trained model and associated data
-    model.save(f'models/{language_code}_model.h5')
-    with open(f'models/words_{language_code}.pkl', 'wb') as f:
+    # Save the trained model and associated data in the models directory
+    model.save(os.path.join(models_dir, f'{language_code}_model.h5'))
+    with open(os.path.join(models_dir, f'words_{language_code}.pkl'), 'wb') as f:
         pickle.dump(words, f)
-    with open(f'models/classes_{language_code}.pkl', 'wb') as f:
+    with open(os.path.join(models_dir, f'classes_{language_code}.pkl'), 'wb') as f:
         pickle.dump(classes, f)
 
-    print(f"Model for {language_code} trained and saved successfully!")
+    print(f"Model for {language_code} trained and saved successfully in {models_dir}!")
 
 if __name__ == "__main__":
     base_path = os.path.dirname(os.path.abspath(__file__))
     intents_path = os.path.join(base_path, 'intents')
-    print(intents_path)
+    models_dir = os.path.join(base_path, 'models')
+
+    print(f"[INFO] Intents path: {intents_path}")
+    print(f"[INFO] Models will be saved in: {models_dir}")
 
     # Train for all supported languages
-    train_model(os.path.join(intents_path, 'intents_english.json'), 'english')
-    train_model(os.path.join(intents_path, 'intents_hindi.json'), 'hindi')
-    train_model(os.path.join(intents_path, 'intents_bengali.json'), 'bengali')
-    train_model(os.path.join(intents_path, 'intents_telugu.json'), 'telugu')
-    train_model(os.path.join(intents_path, 'intents_assamese.json'), 'assamese')
-    train_model(os.path.join(intents_path, 'intents_gujarati.json'), 'gujarati')
+    train_model(os.path.join(intents_path, 'intents_english.json'), 'english', models_dir)
+    train_model(os.path.join(intents_path, 'intents_hindi.json'), 'hindi', models_dir)
+    train_model(os.path.join(intents_path, 'intents_bengali.json'), 'bengali', models_dir)
+    train_model(os.path.join(intents_path, 'intents_telugu.json'), 'telugu', models_dir)
+    train_model(os.path.join(intents_path, 'intents_assamese.json'), 'assamese', models_dir)
+    train_model(os.path.join(intents_path, 'intents_gujarati.json'), 'gujarati', models_dir)
