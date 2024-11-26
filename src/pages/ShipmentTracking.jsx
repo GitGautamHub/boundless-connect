@@ -122,7 +122,7 @@ const ShipmentTracking = () => {
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated API call delay
 
     // Check if the entered tracking ID matches the mock data
-    if (trackingId.trim() === shipmentStatus.id) {
+    if (trackingId.trim().toUpperCase() === shipmentStatus.id.toUpperCase()) {
       setShowResults(true);
     } else {
       alert("Tracking ID not found. Please try again with a valid ID.");
@@ -162,8 +162,7 @@ const ShipmentTracking = () => {
       {/* Instruction for User */}
       <div className="bg-yellow-100 text-yellow-800 p-4 rounded-lg mb-4">
         <p>
-          To view the tracking details, please enter the Tracking ID:{" "}
-          <strong>SHP123456789</strong>
+          To view the tracking details, please enter the Tracking ID: <strong>SHP123456789</strong>
         </p>
       </div>
       {/* Search Section */}
@@ -262,7 +261,7 @@ const ShipmentTracking = () => {
                 Carbon Footprint Estimator
               </h2>
               <p className="text-gray-600 mt-2">
-                Your shipment has an estimated environmental impact of{" "}
+                Your shipment has an estimated environmental impact of {" "}
                 <span className="text-green-600 font-bold">
                   {co2Emission} kg of CO₂
                 </span>
