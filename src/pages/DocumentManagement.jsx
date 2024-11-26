@@ -1,295 +1,223 @@
 import React, { useState } from 'react';
-import { FiStar, FiTruck, FiDollarSign, FiClock } from 'react-icons/fi';
-import { jsPDF } from 'jspdf';
-import JsBarcode from 'jsbarcode';
+import { FiUpload, FiFile, FiCheckCircle, FiAlertCircle, FiX } from 'react-icons/fi';
 
-function CarrierSelection() {
-  const [formData, setFormData] = useState({
-    productType: '',
-    weight: '',
-    dimensions: '',
-    destination: '',
-    deliveryDate: '',
-    packaging: 'eco-friendly', // Default to eco-friendly packaging
-  });
-  const [selectedCarrier, setSelectedCarrier] = useState(null);
-  const [filterCriteria, setFilterCriteria] = useState('');
-  const [filteredCarriers, setFilteredCarriers] = useState([]);
-  const [showRecommendations, setShowRecommendations] = useState(false);
-
-  const carriers = [
+function DocumentManagement() {
+  const [documents, setDocuments] = useState([
     {
       id: 1,
-      name: 'Express Global Logistics',
-      cost: 2450,
-      deliveryTime: '5-7 days',
-      rating: 4.8,
+      name: 'Commercial Invoice.pdf',
+      status: 'Validated',
+      date: '2024-03-20',
+      type: 'Invoice',
+      file: null,
     },
     {
       id: 2,
-      name: 'Swift Carriers Inc.',
-      cost: 2100,
-      deliveryTime: '7-9 days',
-      rating: 4.5,
+      name: 'Packing List.pdf',
+      status: 'Missing Information',
+      date: '2024-03-20',
+      type: 'Packing List',
+      file: null,
     },
     {
       id: 3,
-      name: 'Pacific Route Shipping',
-      cost: 1950,
-      deliveryTime: '8-10 days',
-      rating: 4.3,
+      name: 'Certificate of Origin.pdf',
+      status: 'Validated',
+      date: '2024-03-19',
+      type: 'Certificate',
+      file: null,
     },
-  ];
+  ]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const [dragActive, setDragActive] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState(null);
+  const [showMoreInfo, setShowMoreInfo] = useState(false);
+
+  const handleFileUpload = (files) => {
+    const newDocuments = Array.from(files).map((file, index) => ({
+      id: documents.length + index + 1,
+      name: file.name,
+      status: 'Pending Validation',
+      date: new Date().toISOString().split('T')[0],
+      type: 'Unknown',
+      file: URL.createObjectURL(file),
+    }));
+    setDocuments((prev) => [...prev, ...newDocuments]);
   };
 
-  const handleFilterChange = (e) => {
-    const criteria = e.target.value;
-    setFilterCriteria(criteria);
-
-    let sortedCarriers = [...carriers];
-    if (criteria === 'rating') {
-      sortedCarriers.sort((a, b) => b.rating - a.rating);
-    } else if (criteria === 'cost') {
-      sortedCarriers.sort((a, b) => a.cost - b.cost);
-    } else if (criteria === 'deliveryTime') {
-      sortedCarriers.sort((a, b) => {
-        const timeA = parseInt(a.deliveryTime.split('-')[0]);
-        const timeB = parseInt(b.deliveryTime.split('-')[0]);
-        return timeA - timeB;
-      });
+  const handleFileInputChange = (e) => {
+    const files = e.target.files;
+    if (files.length) {
+      handleFileUpload(files);
     }
-
-    setFilteredCarriers(sortedCarriers);
-    setShowRecommendations(true);
   };
 
-  const handleCarrierSelect = (carrier) => {
-    setSelectedCarrier(carrier);
-  };
-
-  const generateInvoicePDF = () => {
-    const doc = new jsPDF();
-
-    doc.setFillColor(240, 240, 240);
-    doc.rect(0, 0, 210, 297, 'F');
-
-    // Header
-    doc.setFont('Helvetica', 'bold');
-    doc.setFontSize(28);
-    doc.setTextColor(40, 70, 120);
-    doc.text('Shipment Invoice', 105, 20, { align: 'center' });
-
-    doc.setDrawColor(40, 70, 120);
-    doc.line(20, 30, 190, 30);
-
-    // Shipment Details
-    doc.setFont('Helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.text('Shipment Details:', 20, 40);
-
-    doc.setFont('Helvetica', 'italic');
-    doc.text(`Product Type: ${formData.productType}`, 20, 50);
-    doc.text(`Weight: ${formData.weight} kg`, 20, 60);
-    doc.text(`Dimensions: ${formData.dimensions} cm`, 20, 70);
-    doc.text(`Destination: ${formData.destination}`, 20, 80);
-    doc.text(`Delivery Date: ${formData.deliveryDate}`, 20, 90);
-    doc.text(`Packaging: ${formData.packaging}`, 20, 100);
-
-    // Carrier Details
-    if (selectedCarrier) {
-      doc.setFont('Helvetica', 'bold');
-      doc.setTextColor(0, 0, 0);
-      doc.text('Carrier Details:', 20, 115);
-
-      doc.setFont('Helvetica', 'italic');
-      doc.text(`Name: ${selectedCarrier.name}`, 20, 125);
-      doc.text(`Cost: $${selectedCarrier.cost}`, 20, 135);
-      doc.text(`Delivery Time: ${selectedCarrier.deliveryTime}`, 20, 145);
-      doc.text(`Rating: ${selectedCarrier.rating} stars`, 20, 155);
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const files = e.dataTransfer.files;
+    if (files.length) {
+      handleFileUpload(files);
     }
+  };
 
-    // Generate Barcode
-    const canvas = document.createElement('canvas');
-    JsBarcode(canvas, 'SHIP123456789', { format: 'CODE128' });
-    const barcodeImage = canvas.toDataURL('image/png');
-    doc.addImage(barcodeImage, 'PNG', 20, 170, 100, 30);
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
 
-    // Footer
-    doc.setFont('Helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text('Thank you for choosing our service!', 105, 270, { align: 'center' });
+  const previewDocument = (doc) => {
+    setPreviewDoc(doc);
+  };
 
-    doc.save('shipment_invoice.pdf');
+  const toggleMoreInfo = () => {
+    setShowMoreInfo(!showMoreInfo);
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="card mb-8">
-        <h2 className="text-2xl font-semibold mb-6">Shipment Details</h2>
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Product Type
-            </label>
-            <input
-              type="text"
-              name="productType"
-              value={formData.productType}
-              onChange={handleInputChange}
-              className="input-field"
-              placeholder="e.g., Electronics, Textiles"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Weight (kg)
-            </label>
-            <input
-              type="number"
-              name="weight"
-              value={formData.weight}
-              onChange={handleInputChange}
-              className="input-field"
-              placeholder="Enter weight in kg"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Dimensions (cm)
-            </label>
-            <input
-              type="text"
-              name="dimensions"
-              value={formData.dimensions}
-              onChange={handleInputChange}
-              className="input-field"
-              placeholder="L x W x H"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Destination
-            </label>
-            <input
-              type="text"
-              name="destination"
-              value={formData.destination}
-              onChange={handleInputChange}
-              className="input-field"
-              placeholder="Enter destination address"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Pickup Date
-            </label>
-            <input
-              type="date"
-              name="deliveryDate"
-              value={formData.deliveryDate}
-              onChange={handleInputChange}
-              className="input-field"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Packaging Material
-            </label>
-            <select
-              name="packaging"
-              value={formData.packaging}
-              onChange={handleInputChange}
-              className="select-field"
-            >
-              <option value="eco-friendly">Eco-Friendly Packaging</option>
-              <option value="normal">Normal Packaging</option>
-            </select>
-            <p className="text-sm text-green-600 mt-2">
-              Choose eco-friendly packaging to reduce your environmental impact.
-            </p>
-          </div>
-
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Filter Criteria
-            </label>
-            <select
-              value={filterCriteria}
-              onChange={handleFilterChange}
-              className="select-field"
-            >
-              <option value="">Select Criteria</option>
-              <option value="rating">Rating</option>
-              <option value="cost">Cost</option>
-              <option value="deliveryTime">Delivery Time</option>
-            </select>
-          </div>
-
-          {showRecommendations && (
-            <div className="mt-6">
-              <h3 className="text-xl font-semibold">Carrier Recommendations</h3>
-              <div className="space-y-4">
-                {filteredCarriers.map((carrier) => (
-                  <div
-                    key={carrier.id}
-                    onClick={() => handleCarrierSelect(carrier)}
-                    className="border p-4 rounded-lg shadow-sm cursor-pointer"
-                  >
-                    <div className="flex items-center">
-                      <FiTruck className="mr-2 text-blue-500" />
-                      <span className="font-semibold">{carrier.name}</span>
-                    </div>
-                    <p>
-                      <FiDollarSign className="mr-2 text-green-500" />
-                      Cost: ${carrier.cost}
-                    </p>
-                    <p>
-                      <FiClock className="mr-2 text-yellow-500" />
-                      Delivery Time: {carrier.deliveryTime}
-                    </p>
-                    <p>
-                      <FiStar className="mr-2 text-orange-500" />
-                      Rating: {carrier.rating} Stars
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {selectedCarrier && (
-            <div className="mt-6">
-              <button
-                type="button"
-                onClick={generateInvoicePDF}
-                className="btn btn-primary"
-              >
-                Generate Invoice PDF
-              </button>
-            </div>
-          )}
-        </form>
-
-        <div className="mt-8 bg-green-50 border border-green-200 p-4 rounded">
-          <h3 className="text-lg font-semibold text-green-800">
-            Environment Tips:
-          </h3>
-          <ul className="list-disc list-inside text-green-700">
-            <li>Opt for eco-friendly packaging to reduce waste.</li>
-            <li>Combine shipments to lower carbon emissions.</li>
-            <li>Choose carriers that use sustainable transportation methods.</li>
-          </ul>
+      {/* Instructions for Shipment Invoice */}
+      <div className="mb-8 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded">
+        <h2 className="text-lg font-semibold">Enter details to download shipment invoice</h2>
+      </div>
+      
+      {/* Upload Section */}
+      <div
+        className={`card border-2 rounded-lg p-6 ${
+          dragActive ? 'border-primary-600 bg-primary-50' : 'border-gray-200'
+        }`}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+      >
+        <div className="text-center">
+          <FiUpload className="mx-auto h-16 w-16 text-primary-500 mb-4" />
+          <h3 className="text-2xl font-bold mb-2">Upload Documents</h3>
+          <p className="text-gray-600 mb-4">Drag and drop files here or click to upload.</p>
+          <input
+            type="file"
+            id="fileInput"
+            multiple
+            onChange={handleFileInputChange}
+            className="hidden"
+          />
+          <label
+            htmlFor="fileInput"
+            className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 cursor-pointer"
+          >
+            Select Files
+          </label>
         </div>
       </div>
+
+      {/* Documents List */}
+      <div className="card mt-8">
+        <h2 className="text-2xl font-bold mb-6">Uploaded Documents</h2>
+        <div className="space-y-4">
+          {documents.map((doc) => (
+            <div
+              key={doc.id}
+              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-md hover:shadow-lg transition"
+            >
+              <div className="flex items-center">
+                <FiFile className="h-8 w-8 text-primary-500 mr-4" />
+                <div>
+                  <h3 className="font-bold">{doc.name}</h3>
+                  <p className="text-sm text-gray-600">{doc.type} • {doc.date}</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                {doc.status === 'Validated' ? (
+                  <span className="flex items-center text-green-600 font-medium">
+                    <FiCheckCircle className="mr-2" />
+                    {doc.status}
+                  </span>
+                ) : (
+                  <span className="flex items-center text-orange-600 font-medium">
+                    <FiAlertCircle className="mr-2" />
+                    {doc.status}
+                  </span>
+                )}
+                <button
+                  className="ml-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+                  onClick={() => previewDocument(doc)}
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* More Info Section */}
+      {showMoreInfo && (
+        <div className="card mt-8">
+          <h3 className="text-xl font-bold mb-4">Required Documents</h3>
+          <ul className="list-disc ml-6 space-y-2 text-gray-700">
+            <li><strong>Commercial Invoice</strong>: Details about the goods and their value.</li>
+            <li><strong>Packing List</strong>: Information on packaging dimensions and weights.</li>
+            <li><strong>Certificate of Origin</strong>: Certifies the manufacturing origin of goods.</li>
+          </ul>
+        </div>
+      )}
+
+      <div className="mt-6 text-center">
+        <button
+          onClick={toggleMoreInfo}
+          className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700"
+        >
+          {showMoreInfo ? 'Read Less' : 'Read More'}
+        </button>
+      </div>
+
+      {/* Document Preview Modal */}
+      {previewDoc && (
+        <div
+          className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setPreviewDoc(null)}
+        >
+          <div
+            className="bg-white rounded-lg max-w-2xl w-full p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              onClick={() => setPreviewDoc(null)}
+            >
+              <FiX className="h-6 w-6" />
+            </button>
+            <h2 className="text-2xl font-bold mb-4">{previewDoc.name}</h2>
+            <p className="text-gray-600 mb-4">
+              <strong>Status:</strong> {previewDoc.status}
+            </p>
+            {previewDoc.file ? (
+              <iframe
+                src={previewDoc.file}
+                className="w-full h-80 border rounded-lg"
+                title="Document Preview"
+              />
+            ) : (
+              <p className="text-gray-500">No preview available.</p>
+            )}
+            <button
+              className="mt-4 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 w-full"
+              onClick={() => setPreviewDoc(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-export default CarrierSelection;
+export default DocumentManagement;

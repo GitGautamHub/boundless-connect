@@ -131,20 +131,25 @@ function CarrierSelection() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="card mb-8">
-        <h2 className="text-2xl font-semibold mb-6">Shipment Details</h2>
+        <h2 className="text-2xl font-semibold mb-6">Enter details to download shipment invoice</h2>
         <form className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Product Type
             </label>
-            <input
-              type="text"
+            <select
               name="productType"
               value={formData.productType}
               onChange={handleInputChange}
-              className="input-field"
-              placeholder="e.g., Electronics, Textiles"
-            />
+              className="select-field"
+            >
+              <option value="">Select Product Type</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Textiles">Textiles</option>
+              <option value="Furniture">Furniture</option>
+              <option value="Apparel">Apparel</option>
+              <option value="Books">Books</option>
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
