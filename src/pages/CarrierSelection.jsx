@@ -130,8 +130,11 @@ function CarrierSelection() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Instructions for Shipment Invoice */}
+      <div className="mb-8 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded">
+        <h2 className="text-lg font-semibold">Upload your documents here</h2>
+      </div>
       <div className="card mb-8">
-        <h2 className="text-2xl font-semibold mb-6">Enter details to download shipment invoice</h2>
         <form className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">

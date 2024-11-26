@@ -82,9 +82,8 @@ function DocumentManagement() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Instructions for Shipment Invoice */}
       <div className="mb-8 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded">
-        <h2 className="text-lg font-semibold">Enter details to download shipment invoice</h2>
+        <h2 className="text-lg font-semibold">Upload your documents here</h2>
       </div>
       
       {/* Upload Section */}
