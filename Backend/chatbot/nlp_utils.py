@@ -47,6 +47,7 @@ def load_language_model(language_code):
         print(f"[ERROR] Error loading model or data: {e}")
         return None, None, None
 
+
 # Preprocess user input
 def clean_up_sentence(sentence):
     try:
@@ -73,13 +74,17 @@ def predict_class(sentence, language_code):
     if not model:
         print("[ERROR] Model loading failed.")
         return []
+
     try:
         bow = bag_of_words(sentence, words)
         print(f"[DEBUG] Bag of words: {bow}")
+
         res = model.predict(np.array([bow]))[0]
         print(f"[DEBUG] Raw predictions: {res}")
+
         results = [[i, r] for i, r in enumerate(res) if r > 0.15]  # Confidence threshold
         print(f"[DEBUG] Filtered results: {results}")
+
         results.sort(key=lambda x: x[1], reverse=True)
         return [{"intent": classes[r[0]], "probability": str(r[1])} for r in results]
     except Exception as e:
