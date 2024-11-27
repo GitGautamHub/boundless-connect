@@ -53,12 +53,9 @@ def clean_up_sentence(sentence):
         sentence_words = nltk.word_tokenize(sentence)
         sentence_words = [lemmatizer.lemmatize(word.lower()) for word in sentence_words]
         return sentence_words
-    except LookupError as e:
-        print("[ERROR] NLTK resources not found. Attempting to download 'punkt'.")
-        nltk.download('punkt')
-        sentence_words = nltk.word_tokenize(sentence)
-        sentence_words = [lemmatizer.lemmatize(word.lower()) for word in sentence_words]
-        return sentence_words
+    except LookupError:
+        raise LookupError("[ERROR] 'punkt' resource not found in the NLTK data path.")
+
 
 # Convert sentence into bag of words
 def bag_of_words(sentence, words):
