@@ -8,8 +8,10 @@ import pickle
 
 lemmatizer = WordNetLemmatizer()
 
-# Define the base path for models and data
+# Set custom NLTK data path
 base_path = os.path.dirname(os.path.abspath(__file__))
+nltk.data.path.append(os.path.join(base_path, 'nltk_data'))
+
 print(f"[DEBUG] Base path: {base_path}")
 
 # Load model and data for a specific language

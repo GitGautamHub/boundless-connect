@@ -4,6 +4,11 @@ from nlp_utils import predict_class, get_response
 import os
 import time
 import traceback
+import nltk  # Added for nltk path configuration
+
+# Set custom NLTK data path
+base_path = os.path.dirname(os.path.abspath(__file__))
+nltk.data.path.append(os.path.join(base_path, 'nltk_data'))
 
 # Force TensorFlow to use CPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -15,6 +20,10 @@ CORS(app, resources={r"/*": {"origins": [
     "http://localhost:5001",  # Local development
     "https://boundless-connect-frontend.onrender.com"  # Production
 ]}})
+...
+
+# The rest of your code remains unchanged
+
 
 
 @app.route('/', methods=['GET'])
