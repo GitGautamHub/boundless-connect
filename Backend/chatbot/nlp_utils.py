@@ -1,6 +1,7 @@
 import os
 import nltk
 import numpy as np
+from nltk.tokenize.punkt import PunktLanguageVars
 from tensorflow.keras.models import load_model
 from nltk.stem import WordNetLemmatizer
 import json
@@ -9,10 +10,40 @@ import pickle
 lemmatizer = WordNetLemmatizer()
 
 # Set custom NLTK data path
-base_path = os.path.dirname(os.path.abspath(__file__))
-nltk.data.path.append(os.path.join(base_path, 'nltk_data'))
+base_path = os.path.dirname(os.path.abspath(__file__))  # Directory of this file
+nltk_data_path = os.path.join(base_path, "nltk_data")
+nltk.data.path.append(nltk_data_path)
 
 print(f"[DEBUG] Base path: {base_path}")
+print(f"[DEBUG] NLTK data path: {nltk.data.path}")
+
+# Ensure 'punkt_tab' resource exists or download it
+try:
+    nltk.data.find('tokenizers/punkt_tab/english')
+    print("[DEBUG] 'punkt_tab' resource found!")
+except LookupError:
+    print("[DEBUG] 'punkt_tab' resource not found. Downloading...")
+    nltk.download('punkt_tab', download_dir=nltk_data_path)
+
+
+# Safe unpickler class to prevent restricted module loading
+class SafeUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        # Allow only specific modules/classes
+        if module == "nltk.tokenize.punkt" and name == "PunktSentenceTokenizer":
+            return super().find_class(module, name)
+        raise pickle.UnpicklingError(f"Attempted to load restricted class {module}.{name}")
+
+
+# Function to safely load a pickle file
+def safe_pickle_load(file_path):
+    try:
+        with open(file_path, "rb") as f:
+            return SafeUnpickler(f).load()
+    except Exception as e:
+        print(f"[ERROR] Failed to safely load pickle file {file_path}: {e}")
+        raise
+
 
 # Load model and data for a specific language
 def load_language_model(language_code):
@@ -36,12 +67,10 @@ def load_language_model(language_code):
             print(f"[ERROR] Classes file not found: {classes_path}")
             return None, None, None
 
-        # Load model and supporting files
+        # Load model and pickle files safely
         model = load_model(model_path)
-        with open(words_path, 'rb') as f:
-            words = pickle.load(f)
-        with open(classes_path, 'rb') as f:
-            classes = pickle.load(f)
+        words = safe_pickle_load(words_path)
+        classes = safe_pickle_load(classes_path)
         return model, words, classes
     except Exception as e:
         print(f"[ERROR] Error loading model or data: {e}")
@@ -51,11 +80,18 @@ def load_language_model(language_code):
 # Preprocess user input
 def clean_up_sentence(sentence):
     try:
-        sentence_words = nltk.word_tokenize(sentence)
+        print(f"[DEBUG] NLTK paths during tokenization: {nltk.data.path}")
+
+        # Load PunktLanguageVars tokenizer for punkt_tab
+        tokenizer = PunktLanguageVars()
+
+        # Tokenize and lemmatize the sentence
+        sentence_words = tokenizer.word_tokenize(sentence)
         sentence_words = [lemmatizer.lemmatize(word.lower()) for word in sentence_words]
         return sentence_words
-    except LookupError:
-        raise LookupError("[ERROR] 'punkt' resource not found in the NLTK data path.")
+    except Exception as e:
+        print(f"[ERROR] Tokenizer error: {e}")
+        raise
 
 
 # Convert sentence into bag of words
@@ -67,6 +103,7 @@ def bag_of_words(sentence, words):
             if w == s:
                 bag[i] = 1
     return np.array(bag)
+
 
 # Predict intent
 def predict_class(sentence, language_code):
@@ -90,6 +127,7 @@ def predict_class(sentence, language_code):
     except Exception as e:
         print(f"[ERROR] Prediction error: {e}")
         return []
+
 
 # Get response based on intent
 def get_response(intents_list, language_code):
