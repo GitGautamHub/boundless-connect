@@ -25,6 +25,13 @@ except LookupError:
     print("[DEBUG] 'punkt_tab' resource not found. Downloading...")
     nltk.download('punkt_tab', download_dir=nltk_data_path)
 
+# Ensure 'wordnet' resource exists or download it
+try:
+    nltk.data.find('corpora/wordnet')
+    print("[DEBUG] 'wordnet' resource found!")
+except LookupError:
+    print("[DEBUG] 'wordnet' resource not found. Downloading...")
+    nltk.download('wordnet', download_dir=nltk_data_path)
 
 # Safe unpickler class to prevent restricted module loading
 class SafeUnpickler(pickle.Unpickler):
@@ -34,7 +41,6 @@ class SafeUnpickler(pickle.Unpickler):
             return super().find_class(module, name)
         raise pickle.UnpicklingError(f"Attempted to load restricted class {module}.{name}")
 
-
 # Function to safely load a pickle file
 def safe_pickle_load(file_path):
     try:
@@ -43,7 +49,6 @@ def safe_pickle_load(file_path):
     except Exception as e:
         print(f"[ERROR] Failed to safely load pickle file {file_path}: {e}")
         raise
-
 
 # Load model and data for a specific language
 def load_language_model(language_code):
@@ -76,7 +81,6 @@ def load_language_model(language_code):
         print(f"[ERROR] Error loading model or data: {e}")
         return None, None, None
 
-
 # Preprocess user input
 def clean_up_sentence(sentence):
     try:
@@ -93,7 +97,6 @@ def clean_up_sentence(sentence):
         print(f"[ERROR] Tokenizer error: {e}")
         raise
 
-
 # Convert sentence into bag of words
 def bag_of_words(sentence, words):
     sentence_words = clean_up_sentence(sentence)
@@ -103,7 +106,6 @@ def bag_of_words(sentence, words):
             if w == s:
                 bag[i] = 1
     return np.array(bag)
-
 
 # Predict intent
 def predict_class(sentence, language_code):
@@ -127,7 +129,6 @@ def predict_class(sentence, language_code):
     except Exception as e:
         print(f"[ERROR] Prediction error: {e}")
         return []
-
 
 # Get response based on intent
 def get_response(intents_list, language_code):
