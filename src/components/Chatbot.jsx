@@ -11,8 +11,7 @@ function Chatbot() {
   const [language, setLanguage] = useState("english"); // Default language
 
   const backendUrl =
-    import.meta.env.VITE_BACKEND_URL ||
-    "https://boundless-connect-chatbot.onrender.com/chat";
+    "https://boundless-connect-chatbot.onrender.com/chat" || import.meta.env.VITE_BACKEND_URL ;
 
   // Add initial welcome message on load
   useEffect(() => {
