@@ -10,7 +10,7 @@ function Chatbot() {
   const [loading, setLoading] = useState(false); // Loading state
   const [language, setLanguage] = useState("english"); // Default language
 
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || "https://boundless-connect-chatbot.onrender.com/chat";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://boundless-connect-chatbot.onrender.com/chat";
 
   const handleSendMessage = async () => {
     const trimmedInput = input.trim();

@@ -15,15 +15,23 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 app = Flask(__name__)
 
-# Enable CORS for both local development and production
+# Enable CORS with specific origins
 CORS(app, resources={r"/*": {"origins": [
-    "http://localhost:5001",  # Local development
+    "http://localhost:5173",  # Local development
     "https://boundless-connect-frontend.onrender.com"  # Production
-]}})
-...
+]}}, supports_credentials=True)
 
-# The rest of your code remains unchanged
-
+@app.before_request
+def handle_options():
+    """
+    Handle OPTIONS requests for preflight CORS.
+    """
+    if request.method == "OPTIONS":
+        response = app.response_class()
+        response.headers["Access-Control-Allow-Origin"] = request.headers.get("Origin", "*")
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
 
 @app.route('/', methods=['GET'])
