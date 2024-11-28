@@ -108,27 +108,47 @@ def bag_of_words(sentence, words):
     return np.array(bag)
 
 # Predict intent
-def predict_class(sentence, language_code):
-    model, words, classes = load_language_model(language_code)
+def predict_class(message, model, words, classes, language_code):
+    """
+    Predict the intent of the user's message.
+    
+    Args:
+        message (str): The user's message.
+        model: The trained language model.
+        words (list): Tokenized vocabulary of the model.
+        classes (list): Intent classes of the model.
+        language_code (str): Language code for the model.
+
+    Returns:
+        list: A list of intents with their probabilities.
+    """
     if not model:
-        print("[ERROR] Model loading failed.")
+        print(f"[ERROR] Model not found for language: {language_code}")
         return []
 
     try:
-        bow = bag_of_words(sentence, words)
-        print(f"[DEBUG] Bag of words: {bow}")
+        # Preprocess the message into a bag of words
+        bow = bag_of_words(message, words)
+        print(f"[DEBUG] Bag of words for '{message}' in {language_code}: {bow}")
 
+        # Predict probabilities for each class
         res = model.predict(np.array([bow]))[0]
-        print(f"[DEBUG] Raw predictions: {res}")
+        print(f"[DEBUG] Raw predictions for '{message}' in {language_code}: {res}")
 
-        results = [[i, r] for i, r in enumerate(res) if r > 0.15]  # Confidence threshold
+        # Filter results based on confidence threshold
+        results = [[i, r] for i, r in enumerate(res) if r > 0.15]  # Adjust threshold if necessary
         print(f"[DEBUG] Filtered results: {results}")
 
+        # Sort results by probability (descending)
         results.sort(key=lambda x: x[1], reverse=True)
+
+        # Map results to intent names
         return [{"intent": classes[r[0]], "probability": str(r[1])} for r in results]
+
     except Exception as e:
-        print(f"[ERROR] Prediction error: {e}")
+        print(f"[ERROR] Prediction error for '{message}' in {language_code}: {e}")
         return []
+
 
 # Get response based on intent
 def get_response(intents_list, language_code):

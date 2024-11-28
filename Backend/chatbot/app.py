@@ -1,14 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from nlp_utils import predict_class, get_response
+from nlp_utils import load_language_model, predict_class, get_response
 import os
 import time
 import traceback
-import nltk  # Added for nltk path configuration
 
 # Set custom NLTK data path
 base_path = os.path.dirname(os.path.abspath(__file__))
-nltk.data.path.append(os.path.join(base_path, 'nltk_data'))
 
 # Force TensorFlow to use CPU
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -21,6 +19,34 @@ CORS(app, resources={r"/*": {"origins": [
     "https://boundless-connect-frontend.onrender.com"  # Production
 ]}}, supports_credentials=True)
 
+# Global variables for loaded models
+MODELS = {}
+
+
+def preload_models():
+    """
+    Preload language models at the start of the application.
+    """
+    global MODELS
+    supported_languages = ['english', 'hindi', 'bengali', 'telugu', 'assamese', 'gujarati']
+
+    print("[INFO] Preloading models for all supported languages...")
+    for lang in supported_languages:
+        try:
+            model, words, classes = load_language_model(lang)
+            if model:
+                MODELS[lang] = {"model": model, "words": words, "classes": classes}
+                print(f"[INFO] Successfully loaded model for language: {lang}")
+            else:
+                print(f"[WARNING] Model not found for language: {lang}")
+        except Exception as e:
+            print(f"[ERROR] Failed to preload model for language {lang}: {str(e)}")
+
+
+# Preload models when the application starts
+preload_models()
+
+
 @app.before_request
 def handle_options():
     """
@@ -32,7 +58,7 @@ def handle_options():
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
         return response
-    
+
 
 @app.after_request
 def add_cors_headers(response):
@@ -53,6 +79,7 @@ def add_cors_headers(response):
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
 
     return response
+
 
 @app.route('/', methods=['GET'])
 def health_check():
@@ -103,10 +130,23 @@ def chatbot_response():
                 "error": f"Unsupported language. Supported languages are: {', '.join(supported_languages)}."
             }), 400
 
+        # Use preloaded model
+        if language_code not in MODELS or not MODELS[language_code].get("model"):
+            print(f"[ERROR] Model not loaded for language: {language_code}")
+            return jsonify({"error": f"Model not available for language: {language_code}"}), 500
+
+        model_data = MODELS[language_code]
+
         # Log execution time for `predict_class`
         start_time = time.time()
         try:
-            intents_list = predict_class(message, language_code)
+            intents_list = predict_class(
+                message=message,
+                model=model_data["model"],
+                words=model_data["words"],
+                classes=model_data["classes"],
+                language_code=language_code  # Pass the language_code
+            )
             print(f"[DEBUG] Predicted Intents: {intents_list}")
         except Exception as predict_error:
             print(f"[ERROR] predict_class failed: {str(predict_error)}")
