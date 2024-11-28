@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FiMessageSquare, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -10,7 +10,58 @@ function Chatbot() {
   const [loading, setLoading] = useState(false); // Loading state
   const [language, setLanguage] = useState("english"); // Default language
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://boundless-connect-chatbot.onrender.com/chat";
+  const backendUrl =
+    import.meta.env.VITE_BACKEND_URL ||
+    "https://boundless-connect-chatbot.onrender.com/chat";
+
+  // Add initial welcome message on load
+  useEffect(() => {
+    if (isOpen) {
+      setMessages([
+        {
+          sender: "bot",
+          text: "Hi there! I'm here to help you with logistics and shipments.",
+        },
+        {
+          sender: "bot",
+          text: "Here are some examples of what you can ask me:",
+        },
+        {
+          sender: "bot",
+          text: "1. Track my shipment",
+        },
+        {
+          sender: "bot",
+          text: "2. Which carrier is best?",
+        },
+        {
+          sender: "bot",
+          text: "3. How to upload documents?",
+        },
+        {
+          sender: "bot",
+          text: "4. What is Boundless Connect?",
+        },
+        {
+          sender: "bot",
+          text: "5. Help with the dashboard",
+        },
+        {
+          sender: "bot",
+          text: "6. Create a new shipment",
+        },
+        {
+          sender: "bot",
+          text: "7. Contact support",
+        },
+        {
+          sender: "bot",
+          text:
+            "You can also change the language to Hindi, Bengali, Telugu, Assamese, or Gujarati to interact with me. Just select your preferred language from the dropdown above!",
+        },
+      ]);
+    }
+  }, [isOpen]);
 
   const handleSendMessage = async () => {
     const trimmedInput = input.trim();
@@ -22,14 +73,13 @@ function Chatbot() {
     setLoading(true); // Show loading indicator
 
     try {
-      console.log(`[DEBUG] Sending message to bot: ${trimmedInput} in language: ${language}`);
-      const res = await axios.post(
-        backendUrl,
-        {
-          message: trimmedInput,
-          language_code: language, // Send the selected language
-        }
+      console.log(
+        `[DEBUG] Sending message to bot: ${trimmedInput} in language: ${language}`
       );
+      const res = await axios.post(backendUrl, {
+        message: trimmedInput,
+        language_code: language, // Send the selected language
+      });
 
       // Append bot response to the chat
       console.log(`[DEBUG] Bot response: `, res.data.response);
